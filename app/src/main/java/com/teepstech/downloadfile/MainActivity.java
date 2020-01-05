@@ -38,14 +38,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         int permissionWriteExternal = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
         if (permissionWriteExternal != PackageManager.PERMISSION_GRANTED) {
             requestWriteExternalPermission(this);
         }
-
-
-
-
     }
 
     public void downloadSong(View view) {
@@ -56,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
             new DownloadFile().execute(url);
         else
             Toast.makeText(this,"Please insert a link", Toast.LENGTH_SHORT);
-
-
-
     }
     /**
      * Async Task to download file from URL
@@ -70,10 +62,6 @@ public class MainActivity extends AppCompatActivity {
         private String folder;
         private boolean isDownloaded;
 
-        /**
-         * Before starting background thread
-         * Show Progress Bar Dialog
-         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -83,9 +71,6 @@ public class MainActivity extends AppCompatActivity {
             this.progressDialog.show();
         }
 
-        /**
-         * Downloading file in background thread
-         */
         @Override
         protected String doInBackground(String... f_url) {
             int count;
@@ -95,50 +80,35 @@ public class MainActivity extends AppCompatActivity {
                 connection.connect();
                 // getting file length
                 int lengthOfFile = connection.getContentLength();
-
-
                 // input stream to read file - with 8k buffer
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
-
                 String timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-
                 //Extract file name from URL
                 fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1, f_url[0].length());
-
                 //Append timestamp to file name
                 fileName = timestamp + "_" + fileName;
-
                 //External directory path to save file
                 folder = Environment.getExternalStorageDirectory() + File.separator + "Download/";
-
-                //Create androiddeft folder if it does not exist
+                //Create Download folder if it does not exist
                 File directory = new File(folder);
-
                 if (!directory.exists()) {
                     directory.mkdirs();
                 }
-
                 // Output stream to write file
                 OutputStream output = new FileOutputStream(folder + fileName);
-
                 byte data[] = new byte[1024];
-
                 long total = 0;
-
                 while ((count = input.read(data)) != -1) {
                     total += count;
                     // publishing the progress....
                     // After this onProgressUpdate will be called
                     publishProgress("" + (int) ((total * 100) / lengthOfFile));
                     Log.d("DEBUG", "Progress: " + (int) ((total * 100) / lengthOfFile));
-
                     // writing data to file
                     output.write(data, 0, count);
                 }
-
                 // flushing output
                 output.flush();
-
                 // closing streams
                 output.close();
                 input.close();
@@ -147,10 +117,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
             }
-
             return "Something went wrong";
         }
-
         /**
          * Updating progress bar
          */
@@ -158,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
             // setting progress percentage
             progressDialog.setProgress(Integer.parseInt(progress[0]));
         }
-
-
         @Override
         protected void onPostExecute(String message) {
             // dismiss the dialog after the file was downloaded
